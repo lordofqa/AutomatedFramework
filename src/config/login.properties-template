@@ -1,0 +1,20 @@
+###################################################################
+# Test application login information                              #
+###################################################################
+app.server=http://slashdot.org/
+restapi.server=http://*.*.*.*:*
+app.orgcode=automation
+app.user=test_automation@company123.com
+app.pass=password
+app.transport=https
+#chrome_hub=http://localhost:4447
+
+###################################################################
+# databases connection information                            #
+###################################################################
+app.database.user=qa
+app.database.password=password
+app.database.connectstring=jdbc:inetpool:inetdae:10.0.1.51:1688
+app.database.orggroup=af
+
+###################################################################

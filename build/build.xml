@@ -1,0 +1,251 @@
+<project name="qualityautomation" default="compile_debug" basedir=".">
+	<description>
+    Automation Integration Module
+  </description>
+
+	<target name="init" description="Initialization task">
+		<echo message="Initialization task" />
+		<!-- dirs for framework/libraries/ -->
+		<property name="qualityautomation" value=".." />
+		<property name="qualityautomation.lib" value="${qualityautomation}/lib" />
+		<property name="qualityautomation.config" value="${qualityautomation}/src/config" />
+	
+		<!-- dirs for framework/libraries/ -->
+		<property name="src" value="../src" />
+		<echo message="${src}" />
+		<property name="initsetup" value="../init" />
+		<property name="release" value="release" />
+		<property name="compiled" value="${release}/compiled" />
+		<property name="compiled_unittest" value="${release}/compiled_unittest" />
+		<property name="compiled_init" value="${release}/compiled_init" />
+		<property name="config" value="../src/config" />
+
+		<!--testNG properties-->
+		<!-- dirs for test output -->
+		<property name="testng.jar" value="${qualityautomation.lib}/testng-6.8.7/testng-6.8.7.jar" />
+		<property name="test.output" value="${release}/test-output" />
+		<property name="init.output" value="${release}/init-output" />
+
+	</target>
+
+
+	<target name="stage" description="Post Initialization task" depends="init">
+		<echo message="Post Initialization task: creating necessary directories" />
+		<mkdir dir="${release}" />
+		<mkdir dir="${compiled_unittest}" />
+		<mkdir dir="${compiled}" />
+		<mkdir dir="${compiled}/config" />
+		
+		<mkdir dir="${compiled_init}" />
+	</target>
+
+
+	<target name="classpath" description="Classpath task" depends="stage">
+		<echo message="Setting classpath" />
+		<path id="qualityautomation_classpath">
+
+			
+		
+			<fileset dir="..\lib">
+				<include name="testng-6.8.7/testng-6.8.7.jar" />
+				<include name="selenium-2.40.0/*.jar" />
+				<include name="*.jar"/>
+			</fileset>
+
+					
+		</path>
+		<path id="buildpath">
+			<path refid="qualityautomation_classpath" />
+			<pathelement location="${testng.jar}" />
+			<pathelement location="${compiled}" />
+		</path>
+
+	</target>
+
+	<!--  		Removes all compiled classes and jar files	  -->
+	<target name="clean" depends="init" description="Removes all compiled code and jar files">
+		<echo message="Clean: removing all compiled code and jar files" />
+		<echo message="${qualityautomation}" />
+
+		<delete dir="${release}" failonerror="false" />
+		<echo message="Delete login.properties file" />
+		<echo message="${qualityautomation.config}" />
+		<delete>
+			<fileset dir="${qualityautomation.config}" includes="*.properties" />
+		</delete>
+
+	</target>
+
+	<!--  		Removes all compiled unit test classes	  -->
+	<target name="unittests_clean" depends="init" description="Removes all compiled unit testing code only">
+		<echo message="Delete Compiled Unit Test Cases" />
+		<delete dir="${compiled_unittest}" />
+	</target>
+
+	<!--  		Removes all compiled init test classes	  -->
+	<target name="initsetup_clean" depends="init" description="Removes all compiled unit testing code only">
+		<echo message="Delete Compiled Init Test Cases" />
+		<delete dir="${compiled_init}" />
+	</target>
+
+
+		
+	<target name="compile_debug" description="builds unit tests with debug" depends="unittests_clean, clean,stage,classpath" unless="debug.set">
+		<echo message="Building unit tests (Debug Mode)" />
+		<javac srcdir="${src}" destdir="${compiled}" debug="true" includeantruntime="false" debuglevel="lines,vars,source" fork="true" memoryMaximumSize="256m">
+			<classpath refid="qualityautomation_classpath" />
+		</javac>
+		<copy todir="${compiled}\">
+			<fileset dir="${src}">
+				<include name="**/*.csv" />
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.jpg" />
+			</fileset>
+		</copy>
+		<copy todir="${compiled}/config">
+			<fileset dir="${config}">
+				<include name="**/*.properties*" />
+			</fileset>
+		</copy>
+	</target>
+
+		<!-- Nightly -->
+	<target name="testng_nightly" description="trigger the nightly task" depends="compile_debug, nightly_to_retest_stage">
+		<echo message=" -- testng-run using the testng task--" />
+		<path id="compile.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="qualityautomation_classpath" />
+		</path>
+
+		<path id="run.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="compile.cp" />
+			<pathelement location="${compiled}" />
+		</path>
+
+		<taskdef resource="testngtasks" classpath="${testng.jar}" /> 
+		<testng classpathref="run.cp" outputdir="${test.output}" delegateCommandSystemProperties="true">
+			<sysproperty key="org.uncommons.reportng.escape-output" value="false" /> 
+			<xmlfileset dir="${src}/com/company/automation/testautomation/tests/xmlLoader" includes="TC_XmlLoader.xml" />
+		</testng>
+	</target>
+
+
+	<!-- Set test results to retest stage -->
+	<target name="nightly_to_retest_stage" description="trigger the nightly task" depends="compile_debug">
+		<echo message=" -- Set results to retest stage --" />
+		<path id="compile.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="qualityautomation_classpath" />
+		</path>
+
+		<path id="run.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="compile.cp" />
+			<pathelement location="${compiled}" />
+		</path>
+
+		<taskdef resource="testngtasks" classpath="${testng.jar}" /> 
+		<testng classpathref="run.cp" outputdir="${test.output}" delegateCommandSystemProperties="true">
+			<sysproperty key="org.uncommons.reportng.escape-output" value="false" /> 
+			<xmlfileset dir="${src}/com/company/automation/testautomation/testruns" includes="set_to_retest.xml" />
+		</testng>
+	</target>
+	
+	
+			<!-- Trigger addHoc single test execution by TestId-->
+	<target name="adHocTestId" description="Trigger adHoc test execution by TestId" depends="compile_debug">
+		
+		<echo message=" Trigger addHoc single test execution: TestClassName= ${testClass}, Browser= ${browser}, Scenario= ${scenario}, TestId= ${testId}, RunId=NULL" />
+		<path id="compile.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="qualityautomation_classpath" />
+		</path>
+
+		<path id="run.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="compile.cp" />
+			<pathelement location="${compiled}" />
+		</path>
+
+		<taskdef resource="testngtasks" classpath="${testng.jar}" /> 
+		
+		<!--<echo message="Copy Security certificates" />
+		<mkdir dir="${compiled}/config/security" />
+		<copy todir="${compiled}/config/security">
+			<fileset dir="${qualityautomation.config}/security">
+				<include name="jssecacerts" />
+			</fileset>
+		</copy>
+
+		<echo message="Copy Chrome driver" />
+		<copy todir="${compiled}/lib">
+			<fileset dir="${qualityautomation.lib}">
+				<include name="chromedriver.exe" />
+			</fileset>
+		</copy>  --> 
+		
+		<java classname="com.company.automation.automationframework.addhoclauncher.AdHocClassTesterByTestId" classpathref="run.cp" fork="true" failonerror="yes" dir="${compiled}">
+			<arg value="${testClass}" />
+			<arg value="${scenario}" />
+			<arg value="${testId}" />
+			<arg value="${browser}" />
+<!-- 		<jvmarg value="-DorgCode=${orgCode}" />
+			<jvmarg value="-Dserver=${server}" />
+			<jvmarg value="-DpassWord=${passWord}" />
+			<jvmarg value="-DuserName=${userName}" />
+			<jvmarg value="-DjiraListener=${jiraListener}" />
+			<jvmarg value="-DautomationProperties=${automationProperties}" /> -->
+		</java>
+	
+	</target>
+
+
+		<!-- Trigger addHoc single test execution by RunId-->
+	<target name="addHocRunId" description="Trigger addHoc test execution by RunId" depends="compile_debug">
+		
+		<echo message=" Trigger addHoc single test execution: TestClassName= ${testClass}, Browser= ${browser}, Scenario= ${scenario}, RunId= ${runId}, TestId=NULL" />
+		<path id="compile.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="qualityautomation_classpath" />
+		</path>
+
+		<path id="run.cp">
+			<pathelement location="${testng.jar}" />
+			<path refid="compile.cp" />
+			<pathelement location="${compiled}" />
+		</path>
+
+		<taskdef resource="testngtasks" classpath="${testng.jar}" /> 
+		
+		<mkdir dir="${compiled}/config/security" />
+		<copy todir="${compiled}/config/security">
+			<fileset dir="${qualityautomation.config}/security">
+				<include name="jssecacerts" />
+			</fileset>
+		</copy> 
+		
+		<echo message="Copy Chrome driver" />
+		<copy todir="${compiled}/lib">
+			<fileset dir="${qualityautomation.lib}">
+				<include name="chromedriver.exe" />
+			</fileset>
+		</copy> 
+		
+		
+		<java classname="com.company.automation.automationframework.addhoclauncher.AddHocClassTesterByRunId" classpathref="run.cp" fork="true" failonerror="yes" dir="${compiled}">
+			<arg value="${testClass}" />
+			<arg value="${scenario}" />
+			<arg value="${runId}" />
+			<arg value="${browser}" />
+<!-- 			<jvmarg value="-DorgCode=${orgCode}" />
+			<jvmarg value="-Dserver=${server}" />
+			<jvmarg value="-DpassWord=${passWord}" />
+			<jvmarg value="-DuserName=${userName}" />
+			<jvmarg value="-DjiraListener=${jiraListener}" />
+			<jvmarg value="-DautomationProperties=${automationProperties}" /> -->
+		</java>
+	</target>
+	
+	</project>

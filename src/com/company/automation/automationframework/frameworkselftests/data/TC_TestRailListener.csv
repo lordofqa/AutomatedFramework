@@ -1,0 +1,5 @@
+scenario,TestRailCaseId,ScenarioData,ExpectedData
+1,9,Right,Right
+2,8,Right,Wrong
+3,0,Bar
+4,0,FooBar

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Suite" parallel="false">
+	<!--
+	<listeners>
+		<listener
+			class-name="com.company.automation.automationframework.listener.TestRailListener" />
+	</listeners>
+	-->
+	<test name="TC_SlingshotLogin" preserve-order="true">
+				
+		<parameter name="browser" 	value="chrome" />
+		<parameter name="uiTest" value="true" />
+			
+		<classes>
+			<class
+				name="com.company.automation.testautomation.tests.TC_FirstTest" />
+		</classes>
+	</test> <!-- Test -->
+</suite> <!-- Suite -->

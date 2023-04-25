@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Suite" parallel="false">
+
+ <listeners>
+  <listener class-name="com.company.automation.automationframework.listener.TestRailListener"/>
+ </listeners>
+
+
+  <test name="TC_TestRailListener" preserve-order="true">
+	<parameter name="scenario" value="1" />
+	<parameter name="testRunId" value="1" />
+	
+     <classes>
+      <class name="com.company.automation.automationframework.frameworkselftests.TC_TestRailListener"/>
+    </classes>
+
+  </test> <!-- Test -->
+
+</suite> <!-- Suite -->

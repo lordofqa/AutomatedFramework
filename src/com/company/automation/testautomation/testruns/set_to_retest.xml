@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Suite" parallel="false">
+
+	<listeners>
+		<listener
+			class-name="com.company.automation.automationframework.listener.TestRailListener" />
+	</listeners>
+
+	<test name="INIT_TestAccounts" preserve-order="true">
+
+		<parameter name="uiTest" 	value="false" />
+		<parameter name="testRunId" value="1" />
+
+		<classes>
+			<class
+				name="com.company.automation.testautomation.init.INIT_SetTestRunToRetestState" />
+		</classes>
+
+	</test> <!-- Test -->
+
+</suite> <!-- Suite -->

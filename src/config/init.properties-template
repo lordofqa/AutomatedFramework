@@ -1,0 +1,84 @@
+###################################################################
+# System Properties                                               #
+###################################################################
+
+#server setting for chromedriver
+#webdriver.chrome.driver= ../lib/chromedriver.exe
+#local setting for chromedriver
+webdriver.chrome.driver= lib/chromedriver.exe
+
+webdriver.chrome.logfile=chromedriver.log
+webdriver.firefox.bin=C:\\WinApp\\firefox\\firefox.exe
+webdriver.ie.driver=/lib/IEDriverServer.exe
+
+###################################################################
+# Selenium                                                        #
+###################################################################
+#selenium.hub.url =http://localhost:4447
+selenium.hub.url =http://*:4444/wd/hub
+selenium.ajaxTimeOutInSeconds = 5
+selenium.staleElementRetryNum = 5
+selenium.defaultWaitInSecond = 30
+
+selenium.firefox.ajaxTimeOutInSeconds = 10
+selenium.firefox.defaultWaitInSecond = 45
+
+selenium.ie.ajaxTimeOutInSeconds = 10
+selenium.ie.defaultWaitInSecond = 60
+
+###################################################################
+# TestNG                                                          #
+###################################################################
+testng.defaultThreadCount=35
+
+###################################################################
+# TestRail                                                        #
+###################################################################
+testrail.baseurl=https://company123.testrail.com/
+testrail.key=*
+testrail.suites=1,2,3
+
+###################################################################
+# JIRA                                                            #
+###################################################################
+jira.baseurl=https://jira.company.com/jira/rest/
+jira.adminusername=
+jira.adminpassword=
+
+###################################################################
+# General                                                         #
+###################################################################
+remotedriver.retries=3
+login.retries=3
+compare.time.diff=180000
+databasepool=false
+
+###################################################################
+# Master Test Data                                                #
+###################################################################
+master.data.folder=./com/automation/testautomation/tests/data/master/
+
+###################################################################
+# SQLException types                                           #
+###################################################################
+exception.sql.transaction_deadlock=was deadlocked on lock resources with another process and has been chosen as the deadlock victim
+exception.sql.socket_closed=com.inet.tds.at: java.net.SocketException: socket closed
+exception.sql.connection_closed=Connection was closed from pool manager
+
+###################################################################
+# Screenshot Servers Hosts                                        #
+###################################################################
+image.sftp.server.host.url=*.*.*.*
+image.sftp.server.host.port=*
+image.sftp.server.host.ftpUser=QA_FTP
+image.sftp.server.host.ftpPwd=blabla
+image.web.server.host.url=http://*.*.*.*/qa_ftp
+image.sftp.server.upload.folder=/
+
+###################################################################
+# Email properties                                                #
+###################################################################
+email.to =name@company123.com
+email.from =automation_framework@company123.com
+email.host =maileserv
+
