@@ -127,7 +127,7 @@
 		<taskdef resource="testngtasks" classpath="${testng.jar}" /> 
 		<testng classpathref="run.cp" outputdir="${test.output}" delegateCommandSystemProperties="true">
 			<sysproperty key="org.uncommons.reportng.escape-output" value="false" /> 
-			<xmlfileset dir="${src}/com/company/automation/testautomation/tests/xmlLoader" includes="TC_XmlLoader.xml" />
+			<xmlfileset dir="${src}/com/company/automation/testautomation/tests" includes="TC_FirstTest_CH.xml" />
 		</testng>
 	</target>
 
